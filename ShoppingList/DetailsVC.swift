@@ -3,6 +3,7 @@
 //  Created by mustafa deveci on 29.10.2022.
 
 import UIKit
+import CoreData
 
 class DetailsVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
@@ -39,6 +40,29 @@ class DetailsVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
     }
     
     @IBAction func saveButton(_ sender: Any) {
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        let shopping = NSEntityDescription.insertNewObject(forEntityName: "Shopping", into: context)
+        
+        shopping.setValue(nameTextField.text!, forKey: "name")
+        shopping.setValue(sizeTextField.text!, forKey: "size")
+        
+        if let price = Int(priceTextField.text!) {
+            shopping.setValue(price, forKey: "price")
+        }
+        
+        shopping.setValue(UUID(), forKey: "id")
+        
+        let data = imageView.image!.jpegData(compressionQuality: 0.7)
+        shopping.setValue(data, forKey: "image")
+        
+        do {
+            try context.save()
+            print("saved")
+        }catch {
+            print("error")
+        }
     }
     
 }
